@@ -1,0 +1,20 @@
+* Group Me Bot Skeleton
+** Features
+*** Loads Bot from JSON file
+    #+BEGIN_SRC json
+    {
+      "bot_id" : "mybotid_from_groupme.com"
+      "group_id" : "Groupid_bot_is_registered to"
+    }
+    #+END_SRC
+*** Plugins can be added by appending functions to list
+    #+BEGIN_SRC go
+    handles := make([]func(string), 0, 10)
+    handles = append(handles, my_handler1)
+    handles = append(handles, my_handler2)
+    handles = append(handles, my_handler3)
+    #+END_SRC
+** To be implemented
+*** ServeMux to actually receive data from groupme
+*** Sample modules
+*** Dynamically load modules at start time
