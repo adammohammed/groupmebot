@@ -10,6 +10,26 @@
       }
     #+END_SRC
 *** Plugins can be added by appending functions to list
+    Defining hooks is simple. The hooks signature needs to be as follows:
+    #+BEGIN_SRC go
+    func my_hook(msg InboundMessage) (bool, string) {
+    // Here you may do what you please
+    // Typically you'll match a regex and the first return parameter is the result of this match
+            matched, err := regexp.MatchString("Hi!$", msg.Text)
+            if err != nil {
+                    return matched, ""
+            }
+            resp := fmt.Sprintf("Hi there, %v.", msg.Name)
+            return matched, resp
+    }
+    #+END_SRC
+    
+    This function must accept only an Inbound message as input.
+    The outputs must be a boolean and a string. The actual body of the fuction can do whatever you please
+    but the signature is vital to be able to add it to the list of hooks.
+
+    Adding items to the hooks is done as shown below. Assume that these are function names for functions
+    defined with the signature we defined earlier.
     #+BEGIN_SRC go
     handles := make([]func(string), 0, 10)
     handles = append(handles, my_handler1)
@@ -17,6 +37,4 @@
     handles = append(handles, my_handler3)
     #+END_SRC
 ** To be implemented
-*** ServeMux to actually receive data from groupme
-*** Sample modules
 *** Dynamically load modules at start time
