@@ -3,7 +3,7 @@
 *** Loads Bot from JSON file
     #+BEGIN_SRC json
     {
-      "bot_id" : "mybotid_from_groupme.com"
+      "bot_id" : "mybotid_from_groupme.com",
       "group_id" : "Groupid_bot_is_registered to"
     }
     #+END_SRC
