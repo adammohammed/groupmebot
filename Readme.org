@@ -1,6 +1,8 @@
 * Group Me Bot Skeleton
 ** Features
 *** Loads Bot from JSON file
+    Create a bot on the [[%20%20%20%20Create%20a%20groupmebot%20on%20%5Bdev.groupme.com%5D%0Ahttps://dev.groupme.com/bots][GroupMe Website]]. 
+    Make sure you take note of your bot_id and group_id.
     #+BEGIN_SRC json
       {
           "bot_id" : "xcz31231",
@@ -9,19 +11,42 @@
           "port" : "8080"
       }
     #+END_SRC
+    Make sure that on the GroupMe Website your Exteral IP and Port are set. Also 
+    ensure that your ports are avaiable.
+*** Creating your first bot
+    1. To create the bot first make your folders.
+      #+BEGIN_SRC bash mkdir $GOPATH/src/github.com/user/mybot
+      cd $GOPATH/src/github.com/user/mybot
+      #+END_SRC
+
+    2. Create your mybot_cfg.json file shown above with your credentials
+       inserted for that *bot_id* and *group_id*
+
+    3. Copy/Create a main file similar to the one in this repositories example folder
+
+    4. Run this command while in the directory where your main file is located
+       #+BEGIN_SRC go
+       go install 
+       #+END_SRC
+
+    5. Finally you can run your bot using the go run command.
+       #+BEGIN_SRC go
+       go run main.go
+       #+END_SRC
+
 *** Plugins can be added by appending functions to list
     Defining hooks is simple. The hooks signature needs to be as follows:
     #+BEGIN_SRC go
-    func my_hook(msg InboundMessage) (bool, string) {
-    // Here you may do what you please
-    // Typically you'll match a regex and the first return parameter is the result of this match
-            matched, err := regexp.MatchString("Hi!$", msg.Text)
-            if err != nil {
-                    return matched, ""
-            }
-            resp := fmt.Sprintf("Hi there, %v.", msg.Name)
-            return matched, resp
-    }
+      func my_hook(msg groupmebot.InboundMessage) (bool, string) {
+    	  // Here you may do what you please
+    	  // Typically you'll match a regex and the first return parameter is the result of this match
+              matched, err := regexp.MatchString("Hi!$", msg.Text)
+              if err != nil {
+                      return matched, ""
+              }
+              resp := fmt.Sprintf("Hi there, %v.", msg.Name)
+              return matched, resp
+      }
     #+END_SRC
     
     This function must accept only an Inbound message as input.
