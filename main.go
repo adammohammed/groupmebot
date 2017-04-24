@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 )
 
 type GroupMeBot struct {
@@ -58,41 +59,73 @@ func main() {
 	fmt.Printf("The bot id is %v\nThe Group id is %v.\n", bot.ID, bot.GroupID)
 
 	// Make a list of functions
-	h := make([]func(IncomingMessage), 0, 4)
-
-	// Add functions that will later be "hooked" into
-	// as a callback when messages arrive from group chat
-	h = append(h, hello1)
+	h := make([]func(IncomingMessage) (bool, string), 0, 4)
+	h = append(h, hello)
 	h = append(h, hello2)
 
 	// Create Server to listen for incoming POST from GroupMe
 	log.Printf("Listening on %v...\n", bot.Server)
-	http.HandleFunc("/", BotHandler)
+	http.HandleFunc("/", BotHandler(h))
 	log.Fatal(http.ListenAndServe(bot.Server, nil))
 }
 
-// Dummy functions later the input will likely be an
-// IncomingMessage struct instead of string
-func hello1(msg IncomingMessage) {
-	fmt.Println("Hello World")
+/*
+ Test hook functions
+ Each hook should match a certain string, and if it matches
+ it should return a string of text
+ Hooks will be traversed until match occurs
+*/
+func hello(msg IncomingMessage) (bool, string) {
+	matched, err := regexp.MatchString("Hi!$", msg.Text)
+	if err != nil {
+		return matched, ""
+	}
+	resp := fmt.Sprintf("Hi, %v.", msg.Name)
+	return matched, resp
 }
 
-func hello2(msg IncomingMessage) {
-	fmt.Println("Hello,", msg.Name)
+func hello2(msg IncomingMessage) (bool, string) {
+	matched, err := regexp.MatchString("Hello!$", msg.Text)
+	if err != nil {
+		return matched, ""
+	}
+	resp := fmt.Sprintf("Hello, %v.", msg.Name)
+	return matched, resp
 }
 
-// Request Handler function
-func BotHandler(w http.ResponseWriter, req *http.Request) {
-	if req.Method == "POST" {
-		log.Println("Bot recieving and handling message.")
-		defer req.Body.Close()
-		var msg IncomingMessage
-		err := json.NewDecoder(req.Body).Decode(&msg)
-		if err != nil {
-			log.Fatal("Couldn't read all the body", err)
+/*
+ This is legitimate black magic, this is pretty cool, not usually able to do
+ things like this in other languages. This is a function that takes
+ a list of trigger functions and returns a function that can handle the Server
+ Requests
+*/
+func BotHandler(hooks []func(IncomingMessage) (bool, string)) http.HandlerFunc {
+	// Request Handler function
+	numhooks := len(hooks)
+
+	return func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == "POST" {
+			log.Println("Bot recieving and handling message.")
+			defer req.Body.Close()
+			var msg IncomingMessage
+			err := json.NewDecoder(req.Body).Decode(&msg)
+
+			// Find hook by running through hooklist
+			hook, resp := false, ""
+			for i := 0; !hook && i < numhooks; i++ {
+				hook, resp = hooks[i](msg)
+			}
+
+			if hook {
+				log.Printf("Sending message: %v\n", resp)
+			}
+
+			if err != nil {
+				log.Fatal("Couldn't read all the body", err)
+			}
+		} else {
+			log.Println("Bot not responding to unknown message")
+			io.WriteString(w, "GOTEM")
 		}
-	} else {
-		log.Println("Bot not responding to unknown message")
-		io.WriteString(w, "hello world.\n")
 	}
 }
