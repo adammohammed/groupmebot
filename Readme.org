@@ -2,10 +2,12 @@
 ** Features
 *** Loads Bot from JSON file
     #+BEGIN_SRC json
-    {
-      "bot_id" : "mybotid_from_groupme.com",
-      "group_id" : "Groupid_bot_is_registered to"
-    }
+      {
+          "bot_id" : "xcz31231",
+          "group_id" : "109123",
+          "host" : "0.0.0.0",
+          "port" : "8080"
+      }
     #+END_SRC
 *** Plugins can be added by appending functions to list
     #+BEGIN_SRC go
