@@ -35,12 +35,12 @@ and port. Also make sure that whichever port you use, is open on your host.
 5. Finally you can run your bot using the `go run main.go` command
 ### Creating plugins
 Defining hooks is simple. The hooks signature needs to be as follows:
-    ```go
-      func my_hook(msg groupmebot.InboundMessage) (string) {
-              resp := fmt.Sprintf("Hi there, %v.", msg.Name)
-              return resp
-      }
-    ```
+```go
+  func my_hook(msg groupmebot.InboundMessage) (string) {
+          resp := fmt.Sprintf("Hi there, %v.", msg.Name)
+          return resp
+  }
+```
 
 This function must accept only an Inbound message as input.
 The output must be a string. The actual body of the fuction can do whatever you please
@@ -48,9 +48,9 @@ but the signature is vital to be able to add it to the list of hooks.
 
 Adding items to the hooks is done as shown below. Assume that these are function names for functions
 defined with the signature we defined earlier.
-    ```go
-    bot.AddHook("Hi!$", my_hook)
-    ```
+```go
+bot.AddHook("Hi!$", my_hook)
+```
 
 The first parameter to the AddHook method is the regular expression trigger that the message text must match.
 In this example, if the message text ends with "Hi!", the bot will send a response.
