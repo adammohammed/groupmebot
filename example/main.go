@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"regexp"
 
 	"github.com/adammohammed/groupmebot"
 )
@@ -15,22 +14,14 @@ import (
  it should return a string of text
  Hooks will be traversed until match occurs
 */
-func hello(msg groupmebot.InboundMessage) (bool, string) {
-	matched, err := regexp.MatchString("Hi!$", msg.Text)
-	if err != nil {
-		return matched, ""
-	}
+func hello(msg groupmebot.InboundMessage) (string) {
 	resp := fmt.Sprintf("Hi, %v.", msg.Name)
-	return matched, resp
+	return resp
 }
 
-func hello2(msg groupmebot.InboundMessage) (bool, string) {
-	matched, err := regexp.MatchString("Hello!$", msg.Text)
-	if err != nil {
-		return matched, ""
-	}
+func hello2(msg groupmebot.InboundMessage) (string) {
 	resp := fmt.Sprintf("Hello, %v.", msg.Name)
-	return matched, resp
+	return resp
 }
 
 func main() {
@@ -41,8 +32,8 @@ func main() {
 	}
 
 	// Make a list of functions
-	bot.Hooks = append(bot.Hooks, hello)
-	bot.Hooks = append(bot.Hooks, hello2)
+	bot.AddHook("Hi!$", hello)
+	bot.AddHook("Hello!$", hello2)
 
 	// Create Server to listen for incoming POST from GroupMe
 	log.Printf("Listening on %v...\n", bot.Server)

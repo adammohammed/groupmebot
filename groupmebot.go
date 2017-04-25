@@ -6,16 +6,17 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
 type GroupMeBot struct {
-	ID      string `json:"bot_id"`
-	GroupID string `json:"group_id"`
-	Host    string `json:"host"`
-	Port    string `json:"port"`
-	Server  string
-	Hooks   []func(InboundMessage) (bool, string)
+	ID       string `json:"bot_id"`
+	GroupID  string `json:"group_id"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Server   string
+	Hooks    map[string]func(InboundMessage) (string)
 }
 
 type InboundMessage struct {
@@ -52,7 +53,7 @@ func NewBotFromJson(filename string) (*GroupMeBot, error) {
 
 	bot.Server = bot.Host + ":" + bot.Port
 
-	bot.Hooks = make([]func(InboundMessage) (bool, string), 0, 10)
+	bot.Hooks = make(map[string]func(InboundMessage) (string))
 
 	return &bot, err
 }
@@ -68,6 +69,10 @@ func (b *GroupMeBot) SendMessage(outMessage string) (*http.Response, error) {
 	return http.Post("https://api.groupme.com/v3/bots/post", "application/json", strings.NewReader(j_payload))
 }
 
+func (b *GroupMeBot) AddHook(trigger string, response func(InboundMessage) (string)) {
+	b.Hooks[trigger] = response
+}
+
 /*
  This is legitimate black magic, this is pretty cool, not usually able to do
  things like this in other languages. This is a function that takes
@@ -76,7 +81,6 @@ func (b *GroupMeBot) SendMessage(outMessage string) (*http.Response, error) {
 */
 func (b *GroupMeBot) Handler() http.HandlerFunc {
 	// Request Handler function
-	numhooks := len(b.Hooks)
 
 	return func(w http.ResponseWriter, req *http.Request) {
 		if req.Method == "POST" {
@@ -86,12 +90,18 @@ func (b *GroupMeBot) Handler() http.HandlerFunc {
 			err := json.NewDecoder(req.Body).Decode(&msg)
 
 			// Find hook by running through hooklist
-			hook, resp := false, ""
-			for i := 0; !hook && i < numhooks; i++ {
-				hook, resp = b.Hooks[i](msg)
-			}
+			resp := ""
+			for trig, hook := range b.Hooks {
+				matched, err := regexp.MatchString(trig, msg.Text)
 
-			if hook {
+				if matched {
+					resp = hook(msg)
+				} else if err != nil {
+					log.Fatal("Error matching:", err)
+				}
+
+			}
+			if len(resp) > 0 {
 				log.Printf("Sending message: %v\n", resp)
 				_, err := b.SendMessage(resp)
 				if err != nil {
