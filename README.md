@@ -6,7 +6,7 @@ that generate the appropriate repsonses and create a hook with whatever trigger 
 ## Setup
 ### Loads bot from JSON file
 1. Create a bot on the [GroupMe Website][1].
-2. Make sure and take not of your _bot\_id_ and _group\_id_. 
+2. Make sure and take note of your _bot\_id_ and _group\_id_. 
 3. Create a _mybot\_cfg.json_ file.
 ```javascript
 {
@@ -25,26 +25,26 @@ directory that you are working.
 
 ### Creating your first bot
 1. To create the bot first make your folders.
-    ```bash
-    mkdir $GOPATH/src/github.com/user/mybot
-    cd $GOPATH/src/github.com/user/mybot
-    ```
+```sh
+mkdir $GOPATH/src/github.com/user/mybot
+cd $GOPATH/src/github.com/user/mybot
+```
 2. Create your mybot_cfg.json file shown above with your credentials
        inserted for that *bot_id* and *group_id*
 3. Copy/Create a main file similar to the one in this repositories example folder
 4. Run this command while in the directory where your main file is located
-    ```bash
-    go get -u -v github.com/adammohammed/groupmebot
-    go install
-    ```
+```sh
+go get -u -v github.com/adammohammed/groupmebot
+go install
+```
 5. Finally you can run your bot using the `go run main.go` command
 ### Creating plugins
 Defining hooks is simple. The hooks signature needs to be as follows:
 ```go
-  func my_hook(msg groupmebot.InboundMessage) (string) {
-          resp := fmt.Sprintf("Hi there, %v.", msg.Name)
-          return resp
-  }
+func my_hook(msg groupmebot.InboundMessage) (string) {
+        resp := fmt.Sprintf("Hi there, %v.", msg.Name)
+        return resp
+}
 ```
 
 This function must accept only an Inbound message as input.
