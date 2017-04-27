@@ -1,5 +1,5 @@
-# GroupMeBot Skeleton
-This is a GroupMe Bot skeleton that does the basics for you. The bot is configured using the developer API
+# GroupMeBot Framework
+This is a GroupMe Bot Framework that does the basics for you. The bot is configured using the developer API
 information. Once that file is created, the bot is able to start and respond to incoming messages, assuming
 your ports are open and your bot is registered to your IP address. To add functionality, simply add functions 
 that generate the appropriate repsonses and create a hook with whatever trigger you'd like!
@@ -8,16 +8,21 @@ that generate the appropriate repsonses and create a hook with whatever trigger 
 1. Create a bot on the [GroupMe Website][1].
 2. Make sure and take not of your _bot\_id_ and _group\_id_. 
 3. Create a _mybot\_cfg.json_ file.
-    ```JSON
-    {
-      "bot_id": "ffacaer1412....",
-      "group_id": "482719...",
-      "host": "0.0.0.0",
-      "port": "8080"
-    }
-    ```
+```javascript
+{
+  "bot_id": "your_bot_id",
+  "group_id": "your_group_id",
+  "host": "0.0.0.0",
+  "port": "8080"
+}
+```
 Make sure that the bot you created on the [GroupMe Website][1] is registerd to your External IP
 and port. Also make sure that whichever port you use, is open on your host.
+### Installing Go
+This project uses the programming language [Go](https://golang.org).
+Make sure you install it and set your GOPATH environment variable to the location of the
+directory that you are working.
+
 ### Creating your first bot
 1. To create the bot first make your folders.
     ```bash
