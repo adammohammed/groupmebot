@@ -26,7 +26,7 @@ directory that you are working.
 ### Creating your first bot
 1. To create the bot first make your folders.
 ```sh
-mkdir $GOPATH/src/github.com/user/mybot
+mkdir -p $GOPATH/src/github.com/user/mybot
 cd $GOPATH/src/github.com/user/mybot
 ```
 2. Create your mybot_cfg.json file shown above with your credentials
