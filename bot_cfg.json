@@ -1,6 +1,7 @@
 {
     "bot_id": "",
     "group_id": "",
-    "host": "0.0.0.0",
-    "port": "8080"
+    "host": "",
+    "port": "8080",
+    "logfile" : "messages.csv"
 }
