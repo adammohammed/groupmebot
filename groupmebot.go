@@ -1,22 +1,26 @@
 package groupmebot
 
 import (
+	"bufio"
+	"encoding/csv"
 	"encoding/json"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 )
 
 type GroupMeBot struct {
-	ID       string `json:"bot_id"`
-	GroupID  string `json:"group_id"`
-	Host     string `json:"host"`
-	Port     string `json:"port"`
-	Server   string
-	Hooks    map[string]func(InboundMessage) (string)
+	ID      string `json:"bot_id"`
+	GroupID string `json:"group_id"`
+	Host    string `json:"host"`
+	Port    string `json:"port"`
+	LogFile string `json:logfile`
+	Server  string
+	Hooks   map[string]func(InboundMessage) string
 }
 
 type InboundMessage struct {
@@ -52,8 +56,8 @@ func NewBotFromJson(filename string) (*GroupMeBot, error) {
 	json.Unmarshal(file, &bot)
 
 	bot.Server = bot.Host + ":" + bot.Port
-
-	bot.Hooks = make(map[string]func(InboundMessage) (string))
+	log.Printf("  Creating bot at %s\n  Logging at %s\n", bot.Server, bot.LogFile)
+	bot.Hooks = make(map[string]func(InboundMessage) string)
 
 	return &bot, err
 }
@@ -69,8 +73,48 @@ func (b *GroupMeBot) SendMessage(outMessage string) (*http.Response, error) {
 	return http.Post("https://api.groupme.com/v3/bots/post", "application/json", strings.NewReader(j_payload))
 }
 
-func (b *GroupMeBot) AddHook(trigger string, response func(InboundMessage) (string)) {
+func (b *GroupMeBot) AddHook(trigger string, response func(InboundMessage) string) {
 	b.Hooks[trigger] = response
+}
+
+func (b *GroupMeBot) HandleMessage(msg InboundMessage) {
+	resp := ""
+	for trig, hook := range b.Hooks {
+		matched, err := regexp.MatchString(trig, msg.Text)
+
+		if matched {
+			resp = hook(msg)
+		} else if err != nil {
+			log.Fatal("Error matching:", err)
+		}
+
+	}
+	if len(resp) > 0 {
+		log.Printf("Sending message: %v\n", resp)
+		_, err := b.SendMessage(resp)
+		if err != nil {
+			log.Fatal("Error when sending.", err)
+		}
+	}
+
+}
+
+func (b *GroupMeBot) LogMessage(msg InboundMessage) {
+	values := []string{msg.Name, msg.Sender_id, msg.Text}
+
+	log.Printf("%s: %s [Type: %s]\n", msg.Name, msg.Text, msg.Sender_type)
+	f, err := os.OpenFile(b.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+	if err != nil {
+		log.Fatal("Couldn't open file to log messages")
+	}
+
+	defer f.Close()
+	fwriter := bufio.NewWriter(f)
+	csvWriter := csv.NewWriter(fwriter)
+
+	csvWriter.Write(values)
+	csvWriter.Flush()
+	fwriter.Flush()
 }
 
 /*
@@ -84,37 +128,21 @@ func (b *GroupMeBot) Handler() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, req *http.Request) {
 		if req.Method == "POST" {
-			log.Println("Bot recieving and handling message.")
+			//log.Println("Bot recieving and handling message.")
 			defer req.Body.Close()
 			var msg InboundMessage
 			err := json.NewDecoder(req.Body).Decode(&msg)
-
-			// Find hook by running through hooklist
-			resp := ""
-			for trig, hook := range b.Hooks {
-				matched, err := regexp.MatchString(trig, msg.Text)
-
-				if matched {
-					resp = hook(msg)
-				} else if err != nil {
-					log.Fatal("Error matching:", err)
-				}
-
+			if msg.Sender_type != "bot" {
+				b.LogMessage(msg)
+				// Find hook by running through hooklist
+				b.HandleMessage(msg)
 			}
-			if len(resp) > 0 {
-				log.Printf("Sending message: %v\n", resp)
-				_, err := b.SendMessage(resp)
-				if err != nil {
-					log.Fatal("Error when sending.", err)
-				}
-			}
-
 			if err != nil {
 				log.Fatal("Couldn't read all the body", err)
 			}
 		} else {
-			log.Println("Bot not responding to unknown message")
-			io.WriteString(w, "GOTEM")
+			//log.Println("Bot not responding to unknown message")
+			//io.WriteString(w, "GOTEM")
 		}
 	}
 }
