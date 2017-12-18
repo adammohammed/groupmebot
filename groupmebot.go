@@ -100,7 +100,7 @@ func (b *GroupMeBot) HandleMessage(msg InboundMessage) {
 }
 
 func (b *GroupMeBot) LogMessage(msg InboundMessage) {
-	values := []string{msg.Name, msg.Sender_id, msg.Text}
+	values := []string{msg.Sender_id, msg.Text, msg.Name}
 
 	log.Printf("%s: %s [Type: %s]\n", msg.Name, msg.Text, msg.Sender_type)
 	f, err := os.OpenFile(b.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
