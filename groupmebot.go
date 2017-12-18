@@ -56,7 +56,7 @@ func NewBotFromJson(filename string) (*GroupMeBot, error) {
 	json.Unmarshal(file, &bot)
 
 	bot.Server = bot.Host + ":" + bot.Port
-	log.Printf("  Creating bot at %s\n  Logging at %s\n", bot.Server, bot.LogFile)
+	log.Printf("Creating bot at %s\nLogging at %s\n", bot.Server, bot.LogFile)
 	bot.Hooks = make(map[string]func(InboundMessage) string)
 
 	return &bot, err
