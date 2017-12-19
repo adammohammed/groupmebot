@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/csv"
 	"encoding/json"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
