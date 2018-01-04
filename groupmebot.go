@@ -137,7 +137,7 @@ func (b *GroupMeBot) Handler() http.HandlerFunc {
 			var msg InboundMessage
 			err := json.NewDecoder(req.Body).Decode(&msg)
 			if err != nil {
-				log.Debug("Couldn't parse the request body")
+				log.Println("Couldn't parse the request body")
 				msg.Sender_type = "bot"
 			}
 			if msg.Sender_type != "bot" {
