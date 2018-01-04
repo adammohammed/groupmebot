@@ -99,9 +99,13 @@ func (b *GroupMeBot) HandleMessage(msg InboundMessage) {
 }
 
 func (b *GroupMeBot) LogMessage(msg InboundMessage) {
-	values := []string{msg.Sender_id, msg.Text, msg.Name}
+	id = fmt.Sprintf("%s", msg.Sender_id)
+	txt = fmt.Sprintf("\"%s\"", msg.Text)
+	name = fmt.Sprintf("\"%s\"", msg.Name)
+	values := []string{id, txt, name}
 
 	log.Printf("%s: %s [Type: %s]\n", msg.Name, msg.Text, msg.Sender_type)
+
 	f, err := os.OpenFile(b.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		log.Fatal("Couldn't open file to log messages")
