@@ -136,13 +136,14 @@ func (b *GroupMeBot) Handler() http.HandlerFunc {
 			defer req.Body.Close()
 			var msg InboundMessage
 			err := json.NewDecoder(req.Body).Decode(&msg)
+			if err != nil {
+				log.Debug("Couldn't parse the request body")
+				msg.Sender_type = "bot"
+			}
 			if msg.Sender_type != "bot" {
 				b.LogMessage(msg)
 				// Find hook by running through hooklist
 				b.HandleMessage(msg)
-			}
-			if err != nil {
-				log.Fatal("Couldn't read all the body", err)
 			}
 		} else {
 			//log.Println("Bot not responding to unknown message")
