@@ -99,9 +99,9 @@ func (b *GroupMeBot) HandleMessage(msg InboundMessage) {
 }
 
 func (b *GroupMeBot) LogMessage(msg InboundMessage) {
-	id = fmt.Sprintf("%s", msg.Sender_id)
-	txt = fmt.Sprintf("\"%s\"", msg.Text)
-	name = fmt.Sprintf("\"%s\"", msg.Name)
+	id := fmt.Sprintf("%s", msg.Sender_id)
+	txt := fmt.Sprintf("\"%s\"", msg.Text)
+	name := fmt.Sprintf("\"%s\"", msg.Name)
 	values := []string{id, txt, name}
 
 	log.Printf("%s: %s [Type: %s]\n", msg.Name, msg.Text, msg.Sender_type)
