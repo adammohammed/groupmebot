@@ -35,7 +35,7 @@ and port. Also make sure that whichever port you use, is open on your host.
 
 3. Copy/Create a main file similar to the one in this repositories example folder
 ```sh
-cp $GOPATH/src/github.com/adammohammed/examples/main.go .
+cp $GOPATH/src/github.com/adammohammed/groupmebot/example/main.go .
 ```
 4. Run this command while in the directory where your main file is located
 ```sh
