@@ -32,7 +32,7 @@ If you haven't already you may need to to the following:
 }
 ```
 
-Make sure that the bot you created on the [GroupMe Website][1] is registerd to your External IP
+Make sure that the bot you created on the [GroupMe Website][1] is registered to your External IP
 and port. Also make sure that whichever port you use, is open on your host.
 
 3. Copy/Create a main file similar to the one in this repositories example folder
