@@ -17,9 +17,11 @@ cd $GOPATH/src/github.com/user/mybot
 ```
 2. Create your mybot_cfg.json file shown above with your credentials
        inserted for that *bot_id* and *group_id*
-       1. Create a bot on the [GroupMe Website][1].
-       2. Make sure and take note of your _bot\_id_ and _group\_id_.
-       3. Create a _mybot\_cfg.json_ file.
+
+If you haven't already you may need to to the following:
+* Create a bot on the [GroupMe Website][1].
+* Make sure and take note of your _bot\_id_ and _group\_id_.
+
 ```javascript
 {
   "bot_id": "your_bot_id",
