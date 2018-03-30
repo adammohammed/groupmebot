@@ -29,6 +29,7 @@ type GroupMeBot struct {
 	LogMethod        string `json:"logmethod"`
 	Server           string
 	TrackBotMessages bool `json:"trackbotmessags"`
+	TrackBotMessages bool `json:"trackbotmessages"`
 	Hooks            map[string]func(InboundMessage) string
 }
 
