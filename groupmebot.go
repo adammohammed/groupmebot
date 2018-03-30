@@ -14,13 +14,6 @@ import (
 )
 
 type GroupMeBot struct {
-	ID      string `json:"bot_id"`
-	GroupID string `json:"group_id"`
-	Host    string `json:"host"`
-	Port    string `json:"port"`
-	LogFile string `json:logfile`
-	Server  string
-	Hooks   map[string]func(InboundMessage) string
 	ID               string `json:"bot_id"`
 	GroupID          string `json:"group_id"`
 	Host             string `json:"host"`
@@ -28,20 +21,24 @@ type GroupMeBot struct {
 	LogFile          string `json:"logfile"`
 	LogMethod        string `json:"logmethod"`
 	Server           string
-	TrackBotMessages bool `json:"trackbotmessags"`
 	TrackBotMessages bool `json:"trackbotmessages"`
 	Hooks            map[string]func(InboundMessage) string
 }
 
 type InboundMessage struct {
-	Avatar_url  string `json:"avatar_url"`
-	Id          string `json:"id"`
-	Name        string `json:"name"`
-	Sender_id   string `json:"sender_id"`
-	Sender_type string `json:"sender_type"`
-	System      bool   `json:"system"`
-	Text        string `json:"text"`
-	User_id     string `json:"user_id"`
+	Id           string                   `json:"id"`
+	Avatar_url   string                   `json:"avatar_url"`
+	Name         string                   `json:"name"`
+	Sender_id    string                   `json:"sender_id"`
+	Sender_type  string                   `json:"sender_type"`
+	System       bool                     `json:"system"`
+	Text         string                   `json:"text"`
+	Source_guid  string                   `json:"source_guid"`
+	Created_at   int                      `json:"created_at"`
+	User_id      string                   `json:"user_id"`
+	Group_id     string                   `json:"group_id"`
+	Favorited_by []string                 `json:"favorited_by"`
+	Attachments  []map[string]interface{} `json:"attachments"`
 }
 
 type OutboundMessage struct {
