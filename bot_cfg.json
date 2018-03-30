@@ -4,4 +4,5 @@
     "host": "",
     "port": "8080",
     "logfile" : "messages.csv"
+    "trackbotmessages":true
 }

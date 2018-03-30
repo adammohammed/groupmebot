@@ -21,6 +21,15 @@ type GroupMeBot struct {
 	LogFile string `json:logfile`
 	Server  string
 	Hooks   map[string]func(InboundMessage) string
+	ID               string `json:"bot_id"`
+	GroupID          string `json:"group_id"`
+	Host             string `json:"host"`
+	Port             string `json:"port"`
+	LogFile          string `json:"logfile"`
+	LogMethod        string `json:"logmethod"`
+	Server           string
+	TrackBotMessages bool `json:"trackbotmessags"`
+	Hooks            map[string]func(InboundMessage) string
 }
 
 type InboundMessage struct {
@@ -140,7 +149,7 @@ func (b *GroupMeBot) Handler() http.HandlerFunc {
 				log.Println("Couldn't parse the request body")
 				msg.Sender_type = "bot"
 			}
-			if msg.Sender_type != "bot" {
+			if msg.Sender_type != "bot" || b.TrackBotMessages {
 				b.LogMessage(msg)
 				// Find hook by running through hooklist
 				b.HandleMessage(msg)
