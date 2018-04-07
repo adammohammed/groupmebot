@@ -3,6 +3,6 @@
     "group_id": "",
     "host": "",
     "port": "8080",
-    "logfile" : "messages.csv"
+    "logfile" : "messages.csv",
     "trackbotmessages":true
 }
