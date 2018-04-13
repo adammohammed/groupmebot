@@ -1,14 +1,10 @@
 package groupmebot
 
 import (
-	"bufio"
-	"encoding/csv"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"regexp"
 	"strings"
 )
@@ -23,6 +19,7 @@ type GroupMeBot struct {
 	Server           string
 	TrackBotMessages bool `json:"trackbotmessages"`
 	Hooks            map[string]func(InboundMessage) string
+	Logger
 }
 
 type InboundMessage struct {
@@ -44,6 +41,10 @@ type InboundMessage struct {
 type OutboundMessage struct {
 	ID   string `json:"bot_id"`
 	Text string `json:"text"`
+}
+
+type Logger interface {
+	LogMessage(msg InboundMessage)
 }
 
 /// NewBotFromJson (json cfg file name)
@@ -104,28 +105,6 @@ func (b *GroupMeBot) HandleMessage(msg InboundMessage) {
 		}
 	}
 
-}
-
-func (b *GroupMeBot) LogMessage(msg InboundMessage) {
-	id := fmt.Sprintf("%s", msg.Sender_id)
-	txt := fmt.Sprintf("%s", msg.Text)
-	name := fmt.Sprintf("%s", msg.Name)
-	values := []string{id, txt, name}
-
-	log.Printf("%s: %s [Type: %s]\n", msg.Name, msg.Text, msg.Sender_type)
-
-	f, err := os.OpenFile(b.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
-	if err != nil {
-		log.Fatal("Couldn't open file to log messages")
-	}
-
-	defer f.Close()
-	fwriter := bufio.NewWriter(f)
-	csvWriter := csv.NewWriter(fwriter)
-
-	csvWriter.Write(values)
-	csvWriter.Flush()
-	fwriter.Flush()
 }
 
 /*
