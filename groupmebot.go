@@ -43,6 +43,8 @@ type OutboundMessage struct {
 	Text string `json:"text"`
 }
 
+// A CSVLogger comes with the bot, but any logger can be substituted so long as
+// it satisfies this interface
 type Logger interface {
 	LogMessage(msg InboundMessage)
 }
@@ -68,6 +70,27 @@ func NewBotFromJson(filename string) (*GroupMeBot, error) {
 	bot.Hooks = make(map[string]func(InboundMessage) string)
 
 	return &bot, err
+}
+
+/// Updates existing bot with parameters from JSON filename
+/// When using a Logging interface create the bot with the logger first and then
+/// configure it with json
+func (b *GroupMeBot) ConfigureFromJson(filename string) error {
+	file, err := ioutil.ReadFile(filename)
+
+	if err != nil {
+		log.Fatal("Error reading bot configuration json file")
+		return nil, err
+	}
+
+	// Parse out information from file
+	json.Unmarshal(file, b)
+
+	b.Server = b.Host + ":" + b.Port
+	log.Printf("Creating b at %s\nLogging at %s\n", b.Server, b.LogFile)
+	b.Hooks = make(map[string]func(InboundMessage) string)
+
+	return err
 }
 
 func (b *GroupMeBot) SendMessage(outMessage string) (*http.Response, error) {

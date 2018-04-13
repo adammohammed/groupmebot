@@ -14,21 +14,24 @@ import (
  it should return a string of text
  Hooks will be traversed until match occurs
 */
-func hello(msg groupmebot.InboundMessage) (string) {
+func hello(msg groupmebot.InboundMessage) string {
 	resp := fmt.Sprintf("Hi, %v.", msg.Name)
 	return resp
 }
 
-func hello2(msg groupmebot.InboundMessage) (string) {
+func hello2(msg groupmebot.InboundMessage) string {
 	resp := fmt.Sprintf("Hello, %v.", msg.Name)
 	return resp
 }
 
 func main() {
 
-	bot, err := groupmebot.NewBotFromJson("mybot_cfg.json")
+	lg = CSVLogger{LogFile: "test.csv"}
+	bot := GroupMeBot{lg}
+
+	err := bot.ConfigureFromJson("mybot_cfg.json")
 	if err != nil {
-		log.Fatal("Could not create bot structure")
+		log.Fatal("Could not update bot structure")
 	}
 
 	// Make a list of functions
