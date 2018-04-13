@@ -80,7 +80,7 @@ func (b *GroupMeBot) ConfigureFromJson(filename string) error {
 
 	if err != nil {
 		log.Fatal("Error reading bot configuration json file")
-		return nil, err
+		return err
 	}
 
 	// Parse out information from file

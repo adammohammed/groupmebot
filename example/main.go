@@ -26,8 +26,8 @@ func hello2(msg groupmebot.InboundMessage) string {
 
 func main() {
 
-	lg = CSVLogger{LogFile: "test.csv"}
-	bot := GroupMeBot{lg}
+	lg := groupmebot.CSVLogger{LogFile: "test.csv"}
+	bot := groupmebot.GroupMeBot{Logger: lg}
 
 	err := bot.ConfigureFromJson("mybot_cfg.json")
 	if err != nil {
