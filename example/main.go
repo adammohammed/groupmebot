@@ -26,20 +26,14 @@ func hello2(msg groupmebot.InboundMessage) string {
 
 func main() {
 
-	loggerlist := make([]groupmebot.Logger, 2)
-	loggerlist[0] = groupmebot.CSVLogger{LogFile: "test.csv"}
-	loggerlist[1] = groupmebot.StdOutLogger{}
+	lg := groupmebot.CSVLogger{LogFile: "test.csv"}
+	bot := groupmebot.GroupMeBot{Logger: lg}
 
-	compLogger := groupmebot.CompositeLogger{loggerlist}
-	cfg, err := groupmebot.NewBotConfigFromJson("mybot_cfg.json")
-
+	err := bot.ConfigureFromJson("mybot_cfg.json")
 	if err != nil {
 		log.Fatal("Could not update bot structure")
 	}
 
-	bot := groupmebot.GroupMeBot{BotConfig: cfg, Logger: compLogger}
-
-	log.Printf("%s : %s ", bot.LogFile, bot.ID)
 	// Make a list of functions
 	bot.AddHook("Hi!$", hello)
 	bot.AddHook("Hello!$", hello2)
