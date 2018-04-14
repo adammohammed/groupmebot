@@ -47,32 +47,10 @@ type Logger interface {
 	LogMessage(msg InboundMessage)
 }
 
-/// NewBotFromJson (json cfg file name)
 /// This reads a json file containing the keys
 /// See the example bot_cfg.json
-/// Returns err from ioutil if file can not be read
-func NewBotFromJson(filename string) (*GroupMeBot, error) {
-	file, err := ioutil.ReadFile(filename)
-
-	var bot GroupMeBot
-	if err != nil {
-		log.Fatal("Error reading bot configuration json file")
-		return nil, err
-	}
-
-	// Parse out information from file
-	json.Unmarshal(file, &bot)
-
-	bot.Server = bot.Host + ":" + bot.Port
-	log.Printf("Creating bot at %s\n", bot.Server)
-	bot.Hooks = make(map[string]func(InboundMessage) string)
-
-	return &bot, err
-}
-
 /// Updates existing bot with parameters from JSON filename
-/// When using a Logging interface create the bot with the logger first and then
-/// configure it with json
+/// Returns err from ioutil if file can not be read
 func (b *GroupMeBot) ConfigureFromJson(filename string) error {
 	file, err := ioutil.ReadFile(filename)
 
