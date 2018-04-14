@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-type GroupMeBot struct {
+type BotConfig struct {
 	ID               string `json:"bot_id"`
 	GroupID          string `json:"group_id"`
 	Host             string `json:"host"`
@@ -18,7 +18,10 @@ type GroupMeBot struct {
 	LogMethod        string `json:"logmethod"`
 	Server           string
 	TrackBotMessages bool `json:"trackbotmessages"`
-	Hooks            map[string]func(InboundMessage) string
+}
+type GroupMeBot struct {
+	BotConfig
+	Hooks map[string]func(InboundMessage) string
 	Logger
 }
 
@@ -53,44 +56,24 @@ type Logger interface {
 /// This reads a json file containing the keys
 /// See the example bot_cfg.json
 /// Returns err from ioutil if file can not be read
-func NewBotFromJson(filename string) (*GroupMeBot, error) {
+func NewBotConfigFromJson(filename string) (BotConfig, error) {
 	file, err := ioutil.ReadFile(filename)
 
-	var bot GroupMeBot
+	var bot BotConfig
 	if err != nil {
 		log.Fatal("Error reading bot configuration json file")
-		return nil, err
+		return BotConfig{}, err
 	}
 
 	// Parse out information from file
-	json.Unmarshal(file, &bot)
-
-	bot.Server = bot.Host + ":" + bot.Port
-	log.Printf("Creating bot at %s\nLogging at %s\n", bot.Server, bot.LogFile)
-	bot.Hooks = make(map[string]func(InboundMessage) string)
-
-	return &bot, err
-}
-
-/// Updates existing bot with parameters from JSON filename
-/// When using a Logging interface create the bot with the logger first and then
-/// configure it with json
-func (b *GroupMeBot) ConfigureFromJson(filename string) error {
-	file, err := ioutil.ReadFile(filename)
+	err = json.Unmarshal(file, &bot)
 
 	if err != nil {
-		log.Fatal("Error reading bot configuration json file")
-		return err
+		log.Fatalf("Couldn't parse json\n")
 	}
+	log.Printf("from Json: %s %s ", bot.Host, bot.Port)
 
-	// Parse out information from file
-	json.Unmarshal(file, b)
-
-	b.Server = b.Host + ":" + b.Port
-	log.Printf("Creating b at %s\nLogging at %s\n", b.Server, b.LogFile)
-	b.Hooks = make(map[string]func(InboundMessage) string)
-
-	return err
+	return bot, err
 }
 
 func (b *GroupMeBot) SendMessage(outMessage string) (*http.Response, error) {
@@ -105,6 +88,9 @@ func (b *GroupMeBot) SendMessage(outMessage string) (*http.Response, error) {
 }
 
 func (b *GroupMeBot) AddHook(trigger string, response func(InboundMessage) string) {
+	if b.Hooks == nil {
+		b.Hooks = make(map[string]func(InboundMessage) string)
+	}
 	b.Hooks[trigger] = response
 }
 
