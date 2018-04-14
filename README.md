@@ -10,12 +10,12 @@ Make sure you install it and set your GOPATH environment variable to the locatio
 directory that you are working.
 
 ### Creating your first bot
-1. Run this command while in the directory where your main file is located
+1. Grab the framework to get started!
 ```sh
 go get -u -v github.com/adammohammed/groupmebot
 ```
 
-2. To create the bot first make your folders. As with Go convention, just change "user" to your github username and "mybot" to the name of the bot
+2. To create the bot first make your folders. As with Go convention, just change "user" to your GitHub username and "mybot" to the name of the bot.
 ```sh
 mkdir -p $GOPATH/src/github.com/user/mybot
 cd $GOPATH/src/github.com/user/mybot
