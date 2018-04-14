@@ -31,3 +31,23 @@ func (logger CSVLogger) LogMessage(msg InboundMessage) {
 	csvWriter.Flush()
 	fwriter.Flush()
 }
+
+type StdOutLogger struct {
+}
+
+func (logger StdOutLogger) LogMessage(msg InboundMessage) {
+	id := fmt.Sprintf("%s", msg.Sender_id)
+	txt := fmt.Sprintf("%s", msg.Text)
+	name := fmt.Sprintf("%s", msg.Name)
+	log.Printf("Received Message: %s [%s:%s]\n", txt, name, id)
+}
+
+type CompositeLogger struct {
+	Loggers []Logger
+}
+
+func (suite CompositeLogger) LogMessage(msg InboundMessage) {
+	for _, l := range suite.Loggers {
+		l.LogMessage(msg)
+	}
+}
