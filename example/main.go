@@ -26,10 +26,16 @@ func hello2(msg groupmebot.InboundMessage) string {
 
 func main() {
 
+	// Create two channels for logging, one to csv, one to stdout
 	lg := groupmebot.CSVLogger{LogFile: "test.csv"}
-	bot := groupmebot.GroupMeBot{Logger: lg}
+	stdout := groupmebot.StdOutLogger{}
+	// Group the channels in a Composite Logger type
+	combinedLogger := groupmebot.CompositeLogger{Loggers: []groupmebot.Logger{lg, stdout}}
 
+	// Plug in the Loggers to the bot and configure with tokens etc.
+	bot := groupmebot.GroupMeBot{Logger: combinedLogger}
 	err := bot.ConfigureFromJson("mybot_cfg.json")
+
 	if err != nil {
 		log.Fatal("Could not update bot structure")
 	}

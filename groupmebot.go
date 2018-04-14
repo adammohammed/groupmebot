@@ -14,10 +14,8 @@ type GroupMeBot struct {
 	GroupID          string `json:"group_id"`
 	Host             string `json:"host"`
 	Port             string `json:"port"`
-	LogFile          string `json:"logfile"`
-	LogMethod        string `json:"logmethod"`
+	TrackBotMessages bool   `json:"trackbotmessages"`
 	Server           string
-	TrackBotMessages bool `json:"trackbotmessages"`
 	Hooks            map[string]func(InboundMessage) string
 	Logger
 }
@@ -66,7 +64,7 @@ func NewBotFromJson(filename string) (*GroupMeBot, error) {
 	json.Unmarshal(file, &bot)
 
 	bot.Server = bot.Host + ":" + bot.Port
-	log.Printf("Creating bot at %s\nLogging at %s\n", bot.Server, bot.LogFile)
+	log.Printf("Creating bot at %s\n", bot.Server)
 	bot.Hooks = make(map[string]func(InboundMessage) string)
 
 	return &bot, err
@@ -87,7 +85,7 @@ func (b *GroupMeBot) ConfigureFromJson(filename string) error {
 	json.Unmarshal(file, b)
 
 	b.Server = b.Host + ":" + b.Port
-	log.Printf("Creating b at %s\nLogging at %s\n", b.Server, b.LogFile)
+	log.Printf("Creating b at %s\n", b.Server)
 	b.Hooks = make(map[string]func(InboundMessage) string)
 
 	return err
