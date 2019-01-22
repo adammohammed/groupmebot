@@ -17,6 +17,9 @@ func (logger CSVLogger) LogMessage(msg InboundMessage) {
 	txt := fmt.Sprintf("%s", msg.Text)
 	name := fmt.Sprintf("%s", msg.Name)
 	values := []string{id, txt, name}
+	if  len(id) == 0 {
+		return
+	}
 
 	f, err := os.OpenFile(logger.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
